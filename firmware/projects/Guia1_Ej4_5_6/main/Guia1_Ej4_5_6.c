@@ -40,8 +40,7 @@ typedef struct
 } gpioConf_t;
 
 gpioConf_t pinBCD[4]={{GPIO_20,GPIO_OUTPUT},{GPIO_21,GPIO_OUTPUT},{GPIO_22,GPIO_OUTPUT},{GPIO_23,GPIO_OUTPUT}};
-//gpioConf_t pinBCD[4]={{GPIO_LCD_1,GPIO_OUTPUT},{GPIO_LCD_2,GPIO_OUTPUT},{GPIO_LCD_3,GPIO_OUTPUT},{GPIO_LCD_4,GPIO_OUTPUT}};
-//gpioConf_t pinMUX[3]={{GPIO_1,GPIO_OUTPUT},{GPIO_2,GPIO_OUTPUT},{GPIO_5,GPIO_OUTPUT}};
+gpioConf_t pinBCD_LCD[3]={{GPIO_19,GPIO_OUTPUT},{GPIO_18,GPIO_OUTPUT},{GPIO_9,GPIO_OUTPUT}};
 
 /*==================[internal data definition]===============================*/
 
@@ -49,17 +48,15 @@ gpioConf_t pinBCD[4]={{GPIO_20,GPIO_OUTPUT},{GPIO_21,GPIO_OUTPUT},{GPIO_22,GPIO_
 int8_t  convertToBcdArray (uint32_t data, uint8_t digits, uint8_t * bcd_number)
 {
 	uint32_t aux = data;
-	uint8_t control[3];
 
 	for(int i=digits;i>0;i--)
 	{
 		bcd_number[i-1] = aux % 10;
-		control[i-1] = aux % 10;
 
 		aux = aux / 10;
 	}
 
-	return 1;
+	return bcd_number;
 }
 
 void BcdToGPIO(uint8_t digit, gpioConf_t * pins_vector)
@@ -77,12 +74,27 @@ void BcdToGPIO(uint8_t digit, gpioConf_t * pins_vector)
 	}
 }
 
+void BcdToLCD(uint32_t numero, uint8_t n_digitos, gpioConf_t * pins_vector, gpioConf_t * pins_LCD)
+{
+	uint8_t vector[n_digitos];
+
+	convertToBcdArray(numero, n_digitos, vector);
+
+	for(int i=0;i<n_digitos;i++)
+	{
+		printf("%d\n",vector[i]);
+		BcdToGPIO(vector[i],pins_vector);
+		GPIOOn(pins_LCD[i].pin);
+		
+		GPIOOff(pins_LCD[i].pin);
+	}
+}
 
 /*==================[external functions definition]==========================*/
 void app_main(void){
 	
 	/* initializations */
- 	uint32_t numero = 123;
+ 	uint32_t numero = 645;
 	uint8_t num_digitos = 3;
 	uint8_t vector[3];
 
@@ -90,14 +102,21 @@ void app_main(void){
 	{
 		GPIOInit(pinBCD[i].pin, pinBCD[i].dir);
 	}
+
+	for(int i=0;i<3;i++)
+	{
+		GPIOInit(pinBCD_LCD[i].pin, pinBCD_LCD[i].dir);
+	}
 	
-	convertToBcdArray(numero, num_digitos, vector);
+	//convertToBcdArray(numero, num_digitos, vector);
 
 	/*printf("El número %ld convertido a BCD es: ", numero);
 	for (int i = 0; i < num_digitos; i++) {
     	printf("%X ", vector[i]);
 	}*/
 
-	BcdToGPIO(vector[2],pinBCD);
+	//BcdToGPIO(vector[2],pinBCD);
+
+	BcdToLCD(numero, num_digitos, pinBCD, pinBCD_LCD);
 }
 /*==================[end of file]============================================*/
