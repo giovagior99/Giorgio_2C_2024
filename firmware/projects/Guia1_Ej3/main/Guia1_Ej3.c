@@ -104,7 +104,6 @@ void myLeds(leds *l)
 
 /*==================[external functions definition]==========================*/
 void app_main(void){
-	SystemClockInit();
 	LedsInit();
 
     while(1)
@@ -115,7 +114,7 @@ void app_main(void){
 		Delay();
 	}
     
-	return 0;
+
 }
 
 /*==================[end of file]============================================*/
