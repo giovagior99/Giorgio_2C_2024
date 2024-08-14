@@ -62,7 +62,7 @@ int8_t  convertToBcdArray (uint32_t data, uint8_t digits, uint8_t * bcd_number)
 	return 1;
 }
 
-void BcdToLED(uint8_t digit, gpioConf_t * pins_vector)
+void BcdToGPIO(uint8_t digit, gpioConf_t * pins_vector)
 {
 	for(int i=0;i<4;i++)
 	{
@@ -93,11 +93,11 @@ void app_main(void){
 	
 	convertToBcdArray(numero, num_digitos, vector);
 
-	printf("El número %ld convertido a BCD es: ", numero);
+	/*printf("El número %ld convertido a BCD es: ", numero);
 	for (int i = 0; i < num_digitos; i++) {
     	printf("%X ", vector[i]);
-	}
+	}*/
 
-	BcdToLED(vector[0],pinBCD);
+	BcdToGPIO(vector[2],pinBCD);
 }
 /*==================[end of file]============================================*/
