@@ -26,16 +26,17 @@
 /*==================[inclusions]=============================================*/
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "led.h"
+#include "switch.h"
 
 /*==================[macros and definitions]=================================*/
-//#define COUNT_DELAY 3000000
-#define COUNT_DELAY 30000 //se dismunuye la variable para acortar la espera
+#define CONFIG_BLINK_PERIOD 100 //100ms como período de tiempo para la función de retardo
 #define ON 1
 #define OFF 0
 #define TOGGLE 2
-
-enum LED_MODE {one=3, off, toggle};
 
 /*==================[internal data definition]===============================*/
 typedef struct
@@ -47,55 +48,61 @@ typedef struct
 } leds; 
 
 /*==================[internal functions declaration]=========================*/
-void Delay(uint8_t j)
+void myLeds(leds l)
 {
-	uint32_t i;
+	uint8_t i, j;
 
-	for(i=(COUNT_DELAY*j); i!=0; i--)
+	if(l.mode == ON)
 	{
-		   asm  ("nop");
-	}
-}
-
-void myLeds(leds *l)
-{
-	if(*l->mode == ON)
-	{
-		if(*l->n_led == 1)
+		if(l.n_led == 1)
 		{
 			LedOn(LED_1);
 		}
-		if(*l->n_led == 2)
+		if(l.n_led == 2)
 		{
 			LedOn(LED_2);
 		}
-		if(*l->n_led == 3)
+		if(l.n_led == 3)
 		{
 			LedOn(LED_3);
 		}
 	}
 
-	if(*l->mode == OFF)
+	if(l.mode == OFF)
 	{
-		if(*l->n_led == 1)
+		if(l.n_led == 1)
 		{
 			LedOff(LED_1);
 		}
-		if(*l->n_led == 2)
+		if(l.n_led == 2)
 		{
 			LedOff(LED_2);
 		}
-		if(*l->n_led == 3)
+		if(l.n_led == 3)
 		{
 			LedOff(LED_3);
 		}
 	}
 
-	if(*l->mode == TOGGLE)
+	if(l.mode == TOGGLE)
 	{
-		if(j < *l->n_ciclos)
+		for (i = 0; i < l.n_ciclos; i++)
 		{
+			if(l.n_led == 1)
+			{
+				LedToggle(LED_1);
+			}
+			if(l.n_led == 2)
+			{
+				LedToggle(LED_2);
+			}
+			if(l.n_led == 3)
+			{
+				LedToggle(LED_3);
+			}
 
+			for(j = 0; j < (l.periodo/CONFIG_BLINK_PERIOD); j++)
+			vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
 		}
 	}
 
@@ -104,16 +111,36 @@ void myLeds(leds *l)
 
 /*==================[external functions definition]==========================*/
 void app_main(void){
+
+	/*Inicializations*/
+	uint8_t teclas;
 	LedsInit();
+	SwitchesInit();
+
+	leds l;
+	l.mode = TOGGLE; //ON, OFF, TOGGLE
+	l.n_ciclos = 10;
+	l.periodo = 500;
+	l.n_led = 1;
 
     while(1)
 	{
-    	LedOn(LED_1);
-		Delay();
-		LedOff(LED_1);
-		Delay();
+    	teclas  = SwitchesRead();
+    	switch(teclas){
+    		case SWITCH_1:
+    			l.n_led = 1;
+    		break;
+    		case SWITCH_2:
+    			l.n_led = 2;
+    		break;
+			case (SWITCH_1 + SWITCH_2):
+    			l.n_led = 3;
+    		break;
+    	}
+
+		myLeds(l);
+
 	}
-    
 
 }
 
