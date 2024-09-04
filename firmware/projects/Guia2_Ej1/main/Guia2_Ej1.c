@@ -2,8 +2,8 @@
  *
  * @section genDesc General Description
  *
- * This section describes how the program works.
- *
+ * Programa que mide la distancia con el sensor ultrasonido HC-SR04 y muestra la distancia por pantalla
+ * LCD y enciende los leds dependiendo de la distancia medida, dependiendo de la tecla ON y HOLD.
  *
  * @section hardConn Hardware Connection
  *
