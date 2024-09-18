@@ -215,21 +215,21 @@ void app_main(void){
 	LcdItsE0803Init();
 	LedsInit();
 
-	timer_config_t timer_led_1 = {
+	timer_config_t timer_medicion = {
         .timer = TIMER_A,
         .period = CONFIG_MEASURE_PERIOD,
         .func_p = FuncTimerA,
         .param_p = NULL
     };
-    TimerInit(&timer_led_1);
+    TimerInit(&timer_medicion);
 
-	timer_config_t timer_led_2 = {
+	timer_config_t timer_mostrar = {
         .timer = TIMER_B,
         .period = CONFIG_SHOW_PERIOD,
         .func_p = FuncTimerB,
         .param_p = NULL
     };
-    TimerInit(&timer_led_2);
+    TimerInit(&timer_mostrar);
 
 
 	/*tasks*/

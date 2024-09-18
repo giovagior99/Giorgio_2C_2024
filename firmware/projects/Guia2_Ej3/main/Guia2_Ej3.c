@@ -35,6 +35,7 @@
 #include "switch.h"
 #include "lcditse0803.h"
 #include "timer_mcu.h"
+#include "uart_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 /** @def CONFIG_MODE_PERIOD
@@ -68,11 +69,6 @@ bool tecHOLD = 0; //Por defecto no mantiene la medición
  */
 uint16_t distancia = 0;
 
-// /** @def modo_task_handle
-//  * @brief 
-//  */
-// TaskHandle_t modo_task_handle = NULL;
-
 /** @def medir_task_handle
  *  @brief
  */
@@ -82,30 +78,6 @@ TaskHandle_t medir_task_handle = NULL;
  * @brief
  */
 TaskHandle_t mostrar_task_handle = NULL;
-
-/*==================[internal functions declaration]=========================*/
-// /** @def static void ModoTask(void *pvParameter)
-//  * @brief Tarea encargada de leer los cambios en los switches para configurar los modos
-//  * On o Hold
-//  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
-//  */
-// static void ModoTask(void *pvParameter){
-// 	bool boton = 0; //Booleano que almacena el switch presionado
-//     while(true){
-//         boton = SwitchesRead();
-//     	switch(boton){ //Ve si se debe encender la medicion y si se debe mantener
-//     		case SWITCH_1:
-//     			tecON = !tecON;
-//     			break;
-//     		case SWITCH_2:
-//     			tecHOLD = !tecHOLD;
-//     			break;
-//     		default:
-//     			break;
-//     	}
-// 		vTaskDelay(CONFIG_MODE_PERIOD / portTICK_PERIOD_MS);
-//     }
-// }
 
 /** @def void OnOffSwitch(void *pvParameter)
  * @brief Funcion que cuando se presiona el Switch 1 cambia el estado de tecON para encender 
@@ -231,9 +203,15 @@ void app_main(void){
     };
     TimerInit(&timer_led_2);
 
+	serial_config_t ={			
+		.port =	,
+		.baud_rate = ,
+		.func_p = ,
+		.param_p = ,
+	};
+	UartInit(serial_config_t *port_config)
 
 	/*tasks*/
-	// xTaskCreate(&ModoTask, "ModoOnHold", 512, NULL, 5, &modo_task_handle);
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL);
 	SwitchActivInt(SWITCH_2, HoldSwitch, NULL);
     xTaskCreate(&MedirTask, "Medir", 512, NULL, 5, &medir_task_handle);
