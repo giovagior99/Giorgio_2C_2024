@@ -192,14 +192,14 @@ static void MostrarTask(void *pvParameter){
     }
 }
 
-/**
+/** @def void FuncTimerA(void* param)
  * @brief Función invocada en la interrupción del timer A
  */
 void FuncTimerA(void* param){
     vTaskNotifyGiveFromISR(medir_task_handle, pdFALSE);    /* Envía una notificación a la tarea asociada al LED_1 */
 }
 
-/**
+/** @def void FuncTimerB(void* param)
  * @brief Función invocada en la interrupción del timer B
  */
 void FuncTimerB(void* param){
