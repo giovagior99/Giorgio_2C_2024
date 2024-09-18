@@ -164,6 +164,11 @@ static void MostrarTask(void *pvParameter){
     			LedOn(LED_3);
     		}
 		}
+		else
+		{
+			LedsOffAll();
+			LcdItsE0803Off();
+		}
 		vTaskDelay(CONFIG_SHOW_PERIOD / portTICK_PERIOD_MS);
     }
 }
