@@ -18,7 +18,7 @@
  *
  * |   Date	    | Description                                    |
  * |:----------:|:-----------------------------------------------|
- * | 04/09/2024 | Document creation		                         |
+ * | 18/09/2024 | Document creation		                         |
  *
  * @author Giovanni Giorgio (giovanni.giorgio@uner.edu.ar)
  *
@@ -96,6 +96,7 @@ void HoldSwitch(void *pvParameter){
 	tecHOLD = !tecHOLD;	
 }
 
+/*==================[internal functions declaration]=========================*/
 /** @def static void MedirTask(void *pvParameter)
  * @brief Tarea encargada de medir la distancia cada cierto periodo de tiempo
  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
@@ -164,18 +165,27 @@ static void MostrarTask(void *pvParameter){
     }
 }
 
-/**
+/** @def void FuncTimerA(void* param)
  * @brief Función invocada en la interrupción del timer A
  */
 void FuncTimerA(void* param){
     vTaskNotifyGiveFromISR(medir_task_handle, pdFALSE);    /* Envía una notificación a la tarea asociada al LED_1 */
 }
 
-/**
+/**  @def void FuncTimerB(void* param)
  * @brief Función invocada en la interrupción del timer B
  */
 void FuncTimerB(void* param){
     vTaskNotifyGiveFromISR(mostrar_task_handle, pdFALSE);    /* Envía una notificación a la tarea asociada al LED_2 */
+}
+
+/**  @def void FuncUart(void* param)
+ * @brief Función invocada en la interrupción del timer B
+ */
+void FuncUart(void* param){
+	uint8_t dato;
+    UartReadBuffer(UART_PC, &dato);
+	UartSendBuffer(UART_PC, (char *) &dato);
 }
 
 /*==================[external functions definition]==========================*/
@@ -187,29 +197,29 @@ void app_main(void){
 	LcdItsE0803Init();
 	LedsInit();
 
-	timer_config_t timer_led_1 = {
+	timer_config_t timer_medicion = {
         .timer = TIMER_A,
         .period = CONFIG_MEASURE_PERIOD,
         .func_p = FuncTimerA,
         .param_p = NULL
     };
-    TimerInit(&timer_led_1);
+    TimerInit(&timer_medicion);
 
-	timer_config_t timer_led_2 = {
+	timer_config_t timer_mostrar = {
         .timer = TIMER_B,
         .period = CONFIG_SHOW_PERIOD,
         .func_p = FuncTimerB,
         .param_p = NULL
     };
-    TimerInit(&timer_led_2);
+    TimerInit(&timer_mostrar);
 
-	serial_config_t ={			
-		.port =	,
-		.baud_rate = ,
-		.func_p = ,
-		.param_p = ,
+	serial_config_t puertoSerie={			
+		.port =	UART_PC,
+		.baud_rate = 9600,
+		.func_p = FuncUart,
+		.param_p = NULL
 	};
-	UartInit(serial_config_t *port_config)
+	UartInit(&puertoSerie);
 
 	/*tasks*/
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL);
