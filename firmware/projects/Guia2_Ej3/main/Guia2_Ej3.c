@@ -79,6 +79,17 @@ TaskHandle_t medir_task_handle = NULL;
  */
 TaskHandle_t mostrar_task_handle = NULL;
 
+/** @def tecCmIn
+ * @brief Tecla que configura la unidad de medida con la que se muetra la distancia
+ */
+bool tecCmIn = 0; // 0 en cm, 1 en in
+
+/** @def tecMAX
+ * @brief Tecla que muestra por pantantalla la maxima medicion
+ */
+bool tecMAX = 0;
+
+/*==================[internal functions declaration]=========================*/
 /** @def void OnOffSwitch(void *pvParameter)
  * @brief Funcion que cuando se presiona el Switch 1 cambia el estado de tecON para encender 
  * o apagar
@@ -96,7 +107,6 @@ void HoldSwitch(void *pvParameter){
 	tecHOLD = !tecHOLD;	
 }
 
-/*==================[internal functions declaration]=========================*/
 /** @def static void MedirTask(void *pvParameter)
  * @brief Tarea encargada de medir la distancia cada cierto periodo de tiempo
  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
@@ -134,6 +144,9 @@ static void MostrarTask(void *pvParameter){
     		}
 
 			LcdItsE0803Write(dmostrar);
+
+			UartSendString(UART_PC, (char *) dmostrar);
+			UartSendString(UART_PC, " cm\r\n");
 
 			LedsOffAll();
 
@@ -184,8 +197,25 @@ void FuncTimerB(void* param){
  */
 void FuncUart(void* param){
 	uint8_t dato;
-    UartReadBuffer(UART_PC, &dato);
-	UartSendBuffer(UART_PC, (char *) &dato);
+    UartReadByte(UART_PC, &dato);
+	UartSendByte(UART_PC, (char *) &dato);
+
+	switch(dato){
+	case 'O':
+		tecON = !tecON;
+		break;
+	case 'H':
+		tecHOLD = !tecHOLD;
+		break;
+	case 'I':
+		tecCmIn = !tecCmIn;
+		break;
+	case 'M':
+		tecMAX = !tecMAX;
+		break;
+	default:
+		break;
+	}
 }
 
 /*==================[external functions definition]==========================*/
@@ -228,8 +258,8 @@ void app_main(void){
 	xTaskCreate(&MostrarTask, "Mostrar", 512, NULL, 5, &mostrar_task_handle);
 
 	/*timers start*/
-    TimerStart(timer_led_1.timer);
-    TimerStart(timer_led_2.timer);
+    TimerStart(timer_medicion.timer);
+    TimerStart(timer_mostrar.timer);
     
 }
 /*==================[end of file]============================================*/
