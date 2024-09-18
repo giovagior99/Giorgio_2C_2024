@@ -240,8 +240,8 @@ void app_main(void){
 	xTaskCreate(&MostrarTask, "Mostrar", 512, NULL, 5, &mostrar_task_handle);
 
 	/*timers start*/
-    TimerStart(timer_led_1.timer);
-    TimerStart(timer_led_2.timer);
+    TimerStart(timer_medicion.timer);
+    TimerStart(timer_mostrar.timer);
     
 }
 /*==================[end of file]============================================*/
