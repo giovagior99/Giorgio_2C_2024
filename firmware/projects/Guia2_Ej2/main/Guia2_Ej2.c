@@ -34,6 +34,7 @@
 #include "led.h"
 #include "switch.h"
 #include "lcditse0803.h"
+#include "timer_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 /** @def CONFIG_MODE_PERIOD
@@ -44,12 +45,12 @@
 /** @def CONFIG_MEASURE_PERIOD
  * @brief Periodo de tiempo de refresco de medición
  */
-#define CONFIG_MEASURE_PERIOD 1000
+#define CONFIG_MEASURE_PERIOD 1000000 //en microsegundos
 
 /** @def CONFIG_SHOW_PERIOD
  * @brief Periodo de tiempo de refresco de mostrar
  */
-#define CONFIG_SHOW_PERIOD 500
+#define CONFIG_SHOW_PERIOD 500000 //en microsegundos
 
 /*==================[internal data definition]===============================*/
 /** @def tecON
@@ -67,10 +68,10 @@ bool tecHOLD = 0; //Por defecto no mantiene la medición
  */
 uint16_t distancia = 0;
 
-/** @def modo_task_handle
- * @brief 
- */
-TaskHandle_t modo_task_handle = NULL;
+// /** @def modo_task_handle
+//  * @brief 
+//  */
+// TaskHandle_t modo_task_handle = NULL;
 
 /** @def medir_task_handle
  *  @brief
@@ -83,27 +84,44 @@ TaskHandle_t medir_task_handle = NULL;
 TaskHandle_t mostrar_task_handle = NULL;
 
 /*==================[internal functions declaration]=========================*/
-/** @def static void ModoTask(void *pvParameter)
- * @brief Tarea encargada de leer los cambios en los switches para configurar los modos
- * On o Hold
- * @param[in] pvParameter void* que corresponde a los parametros de la tarea
- */
-static void ModoTask(void *pvParameter){
-	bool boton = 0; //Booleano que almacena el switch presionado
-    while(true){
-        boton = SwitchesRead();
-    	switch(boton){ //Ve si se debe encender la medicion y si se debe mantener
-    		case SWITCH_1:
-    			tecON = !tecON;
-    			break;
-    		case SWITCH_2:
-    			tecHOLD = !tecHOLD;
-    			break;
-    		default:
-    			break;
-    	}
-		vTaskDelay(CONFIG_MODE_PERIOD / portTICK_PERIOD_MS);
-    }
+// /** @def static void ModoTask(void *pvParameter)
+//  * @brief Tarea encargada de leer los cambios en los switches para configurar los modos
+//  * On o Hold
+//  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
+//  */
+// static void ModoTask(void *pvParameter){
+// 	bool boton = 0; //Booleano que almacena el switch presionado
+//     while(true){
+//         boton = SwitchesRead();
+//     	switch(boton){ //Ve si se debe encender la medicion y si se debe mantener
+//     		case SWITCH_1:
+//     			tecON = !tecON;
+//     			break;
+//     		case SWITCH_2:
+//     			tecHOLD = !tecHOLD;
+//     			break;
+//     		default:
+//     			break;
+//     	}
+// 		vTaskDelay(CONFIG_MODE_PERIOD / portTICK_PERIOD_MS);
+//     }
+// }
+
+/** @def void OnOffSwitch(void *pvParameter)
+ * @brief Funcion que cuando se presiona el Switch 1 cambia el estado de tecON para encender 
+ * o apagar
+ * @param [in] NULL
+*/
+void OnOffSwitch(void *pvParameter){
+	tecON = !tecON;	
+}
+
+/** @def void OnOffSwitch(void *pvParameter)
+ * @brief Funcion que cuando se presiona el Switch 2 cambia el estado de tecHOLD para mantener la medicion
+ * @param [in] NULL
+*/
+void HoldSwitch(void *pvParameter){
+	tecHOLD = !tecHOLD;	
 }
 
 /** @def static void MedirTask(void *pvParameter)
@@ -113,11 +131,12 @@ static void ModoTask(void *pvParameter){
 static void MedirTask(void *pvParameter){
     while(true)
 	{
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
 		if (tecON) //Si tecON == 1 se mide
 		{
 			distancia = HcSr04ReadDistanceInCentimeters();
 		}
-        vTaskDelay(CONFIG_MEASURE_PERIOD / portTICK_PERIOD_MS);
+        // vTaskDelay(CONFIG_MEASURE_PERIOD / portTICK_PERIOD_MS);
     }
 }
 
@@ -133,6 +152,7 @@ static void MostrarTask(void *pvParameter){
 	uint16_t dmostrar = 0;
     while(true)
 	{	
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
 		if(tecON) //Si tecON == 1 se muestra la distancia
 		{
 			if(!tecHOLD)
@@ -163,9 +183,29 @@ static void MostrarTask(void *pvParameter){
     			LedOn(LED_3);
     		}
 		}
-		vTaskDelay(CONFIG_SHOW_PERIOD / portTICK_PERIOD_MS);
+		else
+		{
+			LedsOffAll();
+			LcdItsE0803Off();
+		}
+		// vTaskDelay(CONFIG_SHOW_PERIOD / portTICK_PERIOD_MS);
     }
 }
+
+/**
+ * @brief Función invocada en la interrupción del timer A
+ */
+void FuncTimerA(void* param){
+    vTaskNotifyGiveFromISR(medir_task_handle, pdFALSE);    /* Envía una notificación a la tarea asociada al LED_1 */
+}
+
+/**
+ * @brief Función invocada en la interrupción del timer B
+ */
+void FuncTimerB(void* param){
+    vTaskNotifyGiveFromISR(mostrar_task_handle, pdFALSE);    /* Envía una notificación a la tarea asociada al LED_2 */
+}
+
 /*==================[external functions definition]==========================*/
 void app_main(void){
 
@@ -175,10 +215,33 @@ void app_main(void){
 	LcdItsE0803Init();
 	LedsInit();
 
+	timer_config_t timer_led_1 = {
+        .timer = TIMER_A,
+        .period = CONFIG_MEASURE_PERIOD,
+        .func_p = FuncTimerA,
+        .param_p = NULL
+    };
+    TimerInit(&timer_led_1);
+
+	timer_config_t timer_led_2 = {
+        .timer = TIMER_B,
+        .period = CONFIG_SHOW_PERIOD,
+        .func_p = FuncTimerB,
+        .param_p = NULL
+    };
+    TimerInit(&timer_led_2);
+
+
 	/*tasks*/
-	xTaskCreate(&ModoTask, "ModoOnHold", 512, NULL, 5, &modo_task_handle);
+	// xTaskCreate(&ModoTask, "ModoOnHold", 512, NULL, 5, &modo_task_handle);
+	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL);
+	SwitchActivInt(SWITCH_2, HoldSwitch, NULL);
     xTaskCreate(&MedirTask, "Medir", 512, NULL, 5, &medir_task_handle);
 	xTaskCreate(&MostrarTask, "Mostrar", 512, NULL, 5, &mostrar_task_handle);
+
+	/*timers start*/
+    TimerStart(timer_led_1.timer);
+    TimerStart(timer_led_2.timer);
     
 }
 /*==================[end of file]============================================*/
