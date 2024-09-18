@@ -28,7 +28,7 @@ var NAVTREE =
     [ "General Description", "index.html#genDesc", null ],
     [ "Hardware Connection", "index.html#hardConn", null ],
     [ "Changelog", "index.html#changelog", null ],
-    [ "Template", "md__c_1_2_repositorios_2_giorgio__2_c__2024_2firmware_2projects_2_guia2___ej1_2_r_e_a_d_m_e.html", null ],
+    [ "Template", "md__c_1_2_users_2alumno_2_desktop_2_nueva_01carpeta_2_giorgio__2_c__2024_2firmware_2projects_2_guia2___ej1_2_r_e_a_d_m_e.html", null ],
     [ "Topics", "topics.html", "topics" ],
     [ "Estructuras de datos", "annotated.html", [
       [ "Estructuras de datos", "annotated.html", "annotated_dup" ],
@@ -43,7 +43,7 @@ var NAVTREE =
       [ "Globales", "globals.html", [
         [ "Todos", "globals.html", "globals_dup" ],
         [ "Funciones", "globals_func.html", "globals_func" ],
-        [ "Variables", "globals_vars.html", "globals_vars" ],
+        [ "Variables", "globals_vars.html", null ],
         [ "typedefs", "globals_type.html", null ],
         [ "Enumeraciones", "globals_enum.html", null ],
         [ "Valores de enumeraciones", "globals_eval.html", "globals_eval" ],
@@ -56,20 +56,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_guia2___ej1_8c.html",
-"bootloader_2config_2sdkconfig_8h.html#a2d38a5dbf32641f9b64b4afc4abf6ecf",
-"bootloader_2config_2sdkconfig_8h.html#a92d6b4671dc4d1f2ca7806ec47064904",
-"bootloader_2config_2sdkconfig_8h.html#afeadf9134128696d89bb3695de972b33",
-"config_2sdkconfig_8h.html#a405c740d8fa70a3befd2eede7346081a",
-"config_2sdkconfig_8h.html#a85d22568892b2a6f49a209ef72786c03",
-"config_2sdkconfig_8h.html#ac744772ef23911ed780cdcf7fb8baa88",
-"dir_989e28f8680015ea565bb406b86086dd.html",
-"group___b_l_e.html#ggaed078c594a86d36a49f51710e35c405ba02f14e6303b4d2e4e46747324d649dda",
-"group___g_i_o_p.html#ga3f43faf280a63697678036bdbd434c46",
-"group___m_p_u6050.html#ga0f9622a82b552e2272079690d603829b",
-"group___m_p_u6050.html#ga7ef3e72f5de0daaec883a4f1440350ce",
-"group___m_p_u6050.html#gaf757b337125ce76f74d451fdb5811cc6",
-"ili9341_8c.html#ae9a82b50c8748942c64e90f7f8629669",
-"structhid__dev__cfg__t.html#a11563208acc8e846560342314084748d"
+"globals_func.html",
+"group___b_u_z_z_e_r.html#ga54087ffb7da518f038a39025b2a9ee7e",
+"group___i_c_o_n_s.html#gga945c9cb2ded81b38da222e91d09df40baf90117d0435584b425b686055fd825d8",
+"group___m_p_u6050.html#ga4aad48766db4bb295d0d1f4a7857b8c3",
+"group___m_p_u6050.html#gab9708af75739a847c2187dcf3e3ab422",
+"group___u_a_r_t.html#gga6e1a445bae87c4cfd26710dbd4657b77aab02e55aa3ae1d09e52cd7c916cd067f",
+"structdigital__io__t.html#ab30ba07e2a0bd07a15e45a92c32db9c5"
 ];
 
 var SYNCONMSG = 'pulsar para deshabilitar sincronización';

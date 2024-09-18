@@ -3,18 +3,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
-<meta name="generator" content="Doxygen 1.11.0"/>
+<meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Guia2_Ej1: Archivo de código fuente C:/Repositorios/Giorgio_2C_2024/firmware/projects/Guia2_Ej1/main/Guia2_Ej1.c</title>
+<title>Guia2_Ej1: Archivo de código fuente C:/Users/alumno/Desktop/Nueva carpeta/Giorgio_2C_2024/firmware/projects/Guia2_Ej1/main/Guia2_Ej1.c</title>
 <link rel="icon" href="icon.ico" type="image/x-icon" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
 <script type="text/javascript" src="clipboard.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
 <script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
-<script type="text/javascript" src="resize.js"></script>
 <script type="text/javascript" src="cookie.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
@@ -54,15 +54,10 @@
 </table>
 </div>
 <!-- end header part -->
-<!-- Generado por Doxygen 1.11.0 -->
+<!-- Generado por Doxygen 1.10.0 -->
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
 var searchBox = new SearchBox("searchBox", "search/",'.html');
-/* @license-end */
-</script>
-<script type="text/javascript">
-/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function() { codefold.init(0); });
 /* @license-end */
 </script>
 </div><!-- top -->
@@ -78,7 +73,7 @@ $(function() { codefold.init(0); });
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function(){initNavTree('_guia2___ej1_8c_source.html',''); initResizable(true); });
+$(function(){initNavTree('_guia2___ej1_8c_source.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -203,30 +198,35 @@ $(function(){initNavTree('_guia2___ej1_8c_source.html',''); initResizable(true);
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>                <a class="code hl_function" href="group___l_e_d.html#ga883021aaef65f080a52b1852172ecbc3">LedOn</a>(<a class="code hl_enumvalue" href="group___l_e_d.html#ggab6831a7d06c0a2bc69f9b024f6445a80a3e1b1af0f74f675e4eb7bd18229adfd3">LED_3</a>);</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            }</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        }</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        vTaskDelay(<a class="code hl_define" href="_guia2___ej1_8c.html#a635e28527e5512230ae4371fe42fbea7">CONFIG_SHOW_PERIOD</a> / portTICK_PERIOD_MS);</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    }</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>}</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="comment">/*==================[external functions definition]==========================*/</span></div>
-<div class="foldopen" id="foldopen00171" data-start="{" data-end="}">
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno"><a class="line" href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">  171</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">app_main</a>(<span class="keywordtype">void</span>){</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="comment">/* initializations */</span></div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>    <a class="code hl_function" href="group___switch.html#ga8eb2865a73bf2d2b9fd6760958a0cc3c">SwitchesInit</a>();</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    <a class="code hl_function" href="group___h_c___s_r04.html#ga9d26cc017fe45c607d08231ebffb46c4">HcSr04Init</a>(<a class="code hl_enumvalue" href="group___g_i_o_p.html#ggaf65604147d0244c9b13cfdc865ad5393a426d08ab85ab3aebbb53eed1a32dfb71">GPIO_3</a>, <a class="code hl_enumvalue" href="group___g_i_o_p.html#ggaf65604147d0244c9b13cfdc865ad5393abbea21b656f1917800d9d279b685f38e">GPIO_2</a>);</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <a class="code hl_function" href="group___l_c_d___i_t_s_e0803.html#ga1c08a1458380c8f0a02a3763d14c8bf3">LcdItsE0803Init</a>();</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <a class="code hl_function" href="group___l_e_d.html#gacba669c3e8f52e45d1bea50c2e63b250">LedsInit</a>();</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="comment">/*tasks*/</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    xTaskCreate(&amp;ModoTask, <span class="stringliteral">&quot;ModoOnHold&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#ac0b9486e9468f3c9ac74b74bf5d8f20a">modo_task_handle</a>);</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    xTaskCreate(&amp;MedirTask, <span class="stringliteral">&quot;Medir&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#a2b0cb40d7a31ce7e8b3f906fd55df312">medir_task_handle</a>);</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    xTaskCreate(&amp;MostrarTask, <span class="stringliteral">&quot;Mostrar&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#a1316d5b1a3e4d9dee5085faf3b582e40">mostrar_task_handle</a>);</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>}</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        {</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            <a class="code hl_function" href="group___l_e_d.html#gafcc4fefa23689ea53feedb349c8a9eb6">LedsOffAll</a>();</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>            <a class="code hl_function" href="group___l_c_d___i_t_s_e0803.html#gae84766fe1e3b5550b1ca4bbc70f00504">LcdItsE0803Off</a>();</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        }</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        vTaskDelay(<a class="code hl_define" href="_guia2___ej1_8c.html#a635e28527e5512230ae4371fe42fbea7">CONFIG_SHOW_PERIOD</a> / portTICK_PERIOD_MS);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>}</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="comment">/*==================[external functions definition]==========================*/</span></div>
+<div class="foldopen" id="foldopen00176" data-start="{" data-end="}">
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno"><a class="line" href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">  176</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">app_main</a>(<span class="keywordtype">void</span>){</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="comment">/* initializations */</span></div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <a class="code hl_function" href="group___switch.html#ga8eb2865a73bf2d2b9fd6760958a0cc3c">SwitchesInit</a>();</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    <a class="code hl_function" href="group___h_c___s_r04.html#ga9d26cc017fe45c607d08231ebffb46c4">HcSr04Init</a>(<a class="code hl_enumvalue" href="group___g_i_o_p.html#ggaf65604147d0244c9b13cfdc865ad5393a426d08ab85ab3aebbb53eed1a32dfb71">GPIO_3</a>, <a class="code hl_enumvalue" href="group___g_i_o_p.html#ggaf65604147d0244c9b13cfdc865ad5393abbea21b656f1917800d9d279b685f38e">GPIO_2</a>);</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    <a class="code hl_function" href="group___l_c_d___i_t_s_e0803.html#ga1c08a1458380c8f0a02a3763d14c8bf3">LcdItsE0803Init</a>();</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <a class="code hl_function" href="group___l_e_d.html#gacba669c3e8f52e45d1bea50c2e63b250">LedsInit</a>();</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    <span class="comment">/*tasks*/</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    xTaskCreate(&amp;ModoTask, <span class="stringliteral">&quot;ModoOnHold&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#ac0b9486e9468f3c9ac74b74bf5d8f20a">modo_task_handle</a>);</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    xTaskCreate(&amp;MedirTask, <span class="stringliteral">&quot;Medir&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#a2b0cb40d7a31ce7e8b3f906fd55df312">medir_task_handle</a>);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    xTaskCreate(&amp;MostrarTask, <span class="stringliteral">&quot;Mostrar&quot;</span>, 512, <a class="code hl_define" href="ili9341_8c.html#a070d2ce7b6bb7e5c05602aa8c308d0c4">NULL</a>, 5, &amp;<a class="code hl_variable" href="_guia2___ej1_8c.html#a1316d5b1a3e4d9dee5085faf3b582e40">mostrar_task_handle</a>);</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>}</div>
 </div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="comment">/*==================[end of file]============================================*/</span></div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="comment">/*==================[end of file]============================================*/</span></div>
 <div class="ttc" id="a_guia2___ej1_8c_html_a1316d5b1a3e4d9dee5085faf3b582e40"><div class="ttname"><a href="_guia2___ej1_8c.html#a1316d5b1a3e4d9dee5085faf3b582e40">mostrar_task_handle</a></div><div class="ttdeci">TaskHandle_t mostrar_task_handle</div><div class="ttdef"><b>Definition</b> <a href="#l00084">Guia2_Ej1.c:84</a></div></div>
 <div class="ttc" id="a_guia2___ej1_8c_html_a2b0cb40d7a31ce7e8b3f906fd55df312"><div class="ttname"><a href="_guia2___ej1_8c.html#a2b0cb40d7a31ce7e8b3f906fd55df312">medir_task_handle</a></div><div class="ttdeci">TaskHandle_t medir_task_handle</div><div class="ttdef"><b>Definition</b> <a href="#l00079">Guia2_Ej1.c:79</a></div></div>
-<div class="ttc" id="a_guia2___ej1_8c_html_a630544a7f0a2cc40d8a7fefab7e2fe70"><div class="ttname"><a href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">app_main</a></div><div class="ttdeci">void app_main(void)</div><div class="ttdef"><b>Definition</b> <a href="#l00171">Guia2_Ej1.c:171</a></div></div>
+<div class="ttc" id="a_guia2___ej1_8c_html_a630544a7f0a2cc40d8a7fefab7e2fe70"><div class="ttname"><a href="_guia2___ej1_8c.html#a630544a7f0a2cc40d8a7fefab7e2fe70">app_main</a></div><div class="ttdeci">void app_main(void)</div><div class="ttdef"><b>Definition</b> <a href="#l00176">Guia2_Ej1.c:176</a></div></div>
 <div class="ttc" id="a_guia2___ej1_8c_html_a635e28527e5512230ae4371fe42fbea7"><div class="ttname"><a href="_guia2___ej1_8c.html#a635e28527e5512230ae4371fe42fbea7">CONFIG_SHOW_PERIOD</a></div><div class="ttdeci">#define CONFIG_SHOW_PERIOD</div><div class="ttdoc">Periodo de tiempo de refresco de mostrar.</div><div class="ttdef"><b>Definition</b> <a href="#l00053">Guia2_Ej1.c:53</a></div></div>
 <div class="ttc" id="a_guia2___ej1_8c_html_a84f866c95c40f50663299f8bfae6c68c"><div class="ttname"><a href="_guia2___ej1_8c.html#a84f866c95c40f50663299f8bfae6c68c">CONFIG_MODE_PERIOD</a></div><div class="ttdeci">#define CONFIG_MODE_PERIOD</div><div class="ttdoc">Periodo de tiempo de refresco de modo (teclas encendido o hold)</div><div class="ttdef"><b>Definition</b> <a href="#l00043">Guia2_Ej1.c:43</a></div></div>
 <div class="ttc" id="a_guia2___ej1_8c_html_a9496beb444b6ade6a9e263ec1f9352f5"><div class="ttname"><a href="_guia2___ej1_8c.html#a9496beb444b6ade6a9e263ec1f9352f5">tecHOLD</a></div><div class="ttdeci">bool tecHOLD</div><div class="ttdef"><b>Definition</b> <a href="#l00064">Guia2_Ej1.c:64</a></div></div>
@@ -241,6 +241,7 @@ $(function(){initNavTree('_guia2___ej1_8c_source.html',''); initResizable(true);
 <div class="ttc" id="agroup___h_c___s_r04_html_ga9d26cc017fe45c607d08231ebffb46c4"><div class="ttname"><a href="group___h_c___s_r04.html#ga9d26cc017fe45c607d08231ebffb46c4">HcSr04Init</a></div><div class="ttdeci">bool HcSr04Init(gpio_t echo, gpio_t trigger)</div><div class="ttdoc">Driver for reading distance with HC-SR04 module.</div><div class="ttdef"><b>Definition</b> <a href="hc__sr04_8c_source.html#l00034">hc_sr04.c:34</a></div></div>
 <div class="ttc" id="agroup___l_c_d___i_t_s_e0803_html_ga1c08a1458380c8f0a02a3763d14c8bf3"><div class="ttname"><a href="group___l_c_d___i_t_s_e0803.html#ga1c08a1458380c8f0a02a3763d14c8bf3">LcdItsE0803Init</a></div><div class="ttdeci">bool LcdItsE0803Init(void)</div><div class="ttdoc">Driver for using the 3 digits numeric display in ESP-EDU.</div><div class="ttdef"><b>Definition</b> <a href="lcditse0803_8c_source.html#l00037">lcditse0803.c:37</a></div></div>
 <div class="ttc" id="agroup___l_c_d___i_t_s_e0803_html_ga77a9887ee733d3212c3e4996c47f1b9d"><div class="ttname"><a href="group___l_c_d___i_t_s_e0803.html#ga77a9887ee733d3212c3e4996c47f1b9d">LcdItsE0803Write</a></div><div class="ttdeci">bool LcdItsE0803Write(uint16_t value)</div><div class="ttdoc">Function to display value a LCD Module for EDU-CIAA.</div><div class="ttdef"><b>Definition</b> <a href="lcditse0803_8c_source.html#l00054">lcditse0803.c:54</a></div></div>
+<div class="ttc" id="agroup___l_c_d___i_t_s_e0803_html_gae84766fe1e3b5550b1ca4bbc70f00504"><div class="ttname"><a href="group___l_c_d___i_t_s_e0803.html#gae84766fe1e3b5550b1ca4bbc70f00504">LcdItsE0803Off</a></div><div class="ttdeci">void LcdItsE0803Off(void)</div><div class="ttdoc">Turn off display.</div><div class="ttdef"><b>Definition</b> <a href="lcditse0803_8c_source.html#l00087">lcditse0803.c:87</a></div></div>
 <div class="ttc" id="agroup___l_e_d_html_ga883021aaef65f080a52b1852172ecbc3"><div class="ttname"><a href="group___l_e_d.html#ga883021aaef65f080a52b1852172ecbc3">LedOn</a></div><div class="ttdeci">uint8_t LedOn(led_t led)</div><div class="ttdoc">Turn on a specific LED.</div><div class="ttdef"><b>Definition</b> <a href="led_8c_source.html#l00046">led.c:46</a></div></div>
 <div class="ttc" id="agroup___l_e_d_html_gacba669c3e8f52e45d1bea50c2e63b250"><div class="ttname"><a href="group___l_e_d.html#gacba669c3e8f52e45d1bea50c2e63b250">LedsInit</a></div><div class="ttdeci">uint8_t LedsInit(void)</div><div class="ttdoc">ESP-EDU LEDs initialization.</div><div class="ttdef"><b>Definition</b> <a href="led_8c_source.html#l00031">led.c:31</a></div></div>
 <div class="ttc" id="agroup___l_e_d_html_gafcc4fefa23689ea53feedb349c8a9eb6"><div class="ttname"><a href="group___l_e_d.html#gafcc4fefa23689ea53feedb349c8a9eb6">LedsOffAll</a></div><div class="ttdeci">uint8_t LedsOffAll(void)</div><div class="ttdoc">Turn off all LEDs.</div><div class="ttdef"><b>Definition</b> <a href="led_8c_source.html#l00105">led.c:105</a></div></div>
@@ -262,7 +263,7 @@ $(function(){initNavTree('_guia2___ej1_8c_source.html',''); initResizable(true);
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_429d80758da54da73083af4edd40d0b3.html">projects</a></li><li class="navelem"><a class="el" href="dir_88f26fd8c901293d157656f46a8a3c9f.html">Guia2_Ej1</a></li><li class="navelem"><a class="el" href="dir_989e28f8680015ea565bb406b86086dd.html">main</a></li><li class="navelem"><a class="el" href="_guia2___ej1_8c.html">Guia2_Ej1.c</a></li>
-    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.11.0 </li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 </body>
