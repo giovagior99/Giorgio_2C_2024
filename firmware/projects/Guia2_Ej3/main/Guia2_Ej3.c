@@ -19,6 +19,7 @@
  * |   Date	    | Description                                    |
  * |:----------:|:-----------------------------------------------|
  * | 18/09/2024 | Document creation		                         |
+ * | 23/10/2024 | End obligatory part, UART, On and Hold                         |
  *
  * @author Giovanni Giorgio (giovanni.giorgio@uner.edu.ar)
  *
@@ -124,7 +125,6 @@ static void MedirTask(void *pvParameter){
 		{
 			distancia = HcSr04ReadDistanceInCentimeters();
 		}
-        // vTaskDelay(CONFIG_MEASURE_PERIOD / portTICK_PERIOD_MS);
     }
 }
 
@@ -181,7 +181,6 @@ static void MostrarTask(void *pvParameter){
 			LedsOffAll();
 			LcdItsE0803Off();
 		}
-		// vTaskDelay(CONFIG_SHOW_PERIOD / portTICK_PERIOD_MS);
     }
 }
 
