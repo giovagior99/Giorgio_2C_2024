@@ -79,6 +79,11 @@ TaskHandle_t medir_task_handle = NULL;
  */
 TaskHandle_t mostrar_task_handle = NULL;
 
+/** @def comunicar_task_handle
+ * @brief
+ */
+TaskHandle_t comunicar_task_handle = NULL;
+
 /** @def tecCmIn
  * @brief Tecla que configura la unidad de medida con la que se muetra la distancia
  */
@@ -132,7 +137,8 @@ static void MedirTask(void *pvParameter){
  * @param[in] pvParameter void* que corresponde a los métodos de la tarea
  */
 static void MostrarTask(void *pvParameter){
-	uint16_t dmostrar = 0;
+	uint16_t dmostrar = 0; //Distancia a mostrar
+	char buffer[12]; //Para mostrar la distancia por uart
     while(true)
 	{	
 		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
@@ -145,8 +151,9 @@ static void MostrarTask(void *pvParameter){
 
 			LcdItsE0803Write(dmostrar);
 
-			UartSendString(UART_PC, (char *) dmostrar);
-			UartSendString(UART_PC, " cm\r\n");
+			// sprintf(buffer, "%03d cm\r\n", dmostrar); //Escribo el estring a mostrar
+            UartSendString(UART_PC, (char*)UartItoa(dmostrar, 10)); //Mando el string por UART
+            UartSendString(UART_PC, " cm\r\n"); //Mando el string por UART
 
 			LedsOffAll();
 
@@ -193,7 +200,7 @@ void FuncTimerB(void* param){
 }
 
 /**  @def void FuncUart(void* param)
- * @brief Función invocada en la interrupción del timer B
+ * @brief Función invocada al recibir un dato por UART
  */
 void FuncUart(void* param){
 	uint8_t dato;
@@ -255,7 +262,7 @@ void app_main(void){
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL);
 	SwitchActivInt(SWITCH_2, HoldSwitch, NULL);
     xTaskCreate(&MedirTask, "Medir", 512, NULL, 5, &medir_task_handle);
-	xTaskCreate(&MostrarTask, "Mostrar", 512, NULL, 5, &mostrar_task_handle);
+	xTaskCreate(&MostrarTask, "Mostrar", 1024, NULL, 5, &mostrar_task_handle);
 
 	/*timers start*/
     TimerStart(timer_medicion.timer);
