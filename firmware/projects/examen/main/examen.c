@@ -15,10 +15,11 @@
  * | 	  LED 2	 	| 	 GPIO_10	|
  * |      LED 3	 	| 	 GPIO_5		|
  * |      BUZZER 	| 	 GPIO_23	|
+ * |      UART TX 	| 	 GPIO_18	|
+ * |      UART RX 	| 	 GPIO_19	|
  * | 	  GND	 	| 	  GND		|
  * |      +5V	 	| 	  +5V		|
  *
-
  *
  * @section changelog Changelog
  *
@@ -39,6 +40,7 @@
 #include "hc_sr04.h"
 #include "led.h"
 #include "timer_mcu.h"
+#include "uart_mcu.h"
 /*==================[macros and definitions]=================================*/
 
 /** @def CONFIG_MEDIR_PERIOD
@@ -104,12 +106,13 @@ static void MedirTask(void *pvParameter){
 }
 
 /** @def static void NotificarTask(void *pvParameter)
- * @brief Tarea encargada de mostrar la distancia en los leds y activar el buzzer.
- * Si distancia >= 5m enciente el led verde
- * Si 3m <= distancia < 5m enciende los leds verde y amarillo
- * Si distancia < 3m enciende los leds verde, amarillo y rojo
- * Activa el buzzer si distancia < 5m, con una frecuancia de 1s si distancia < 5m y 0.5s
- * si distancia < 3m
+ * @brief Tarea encargada de mostrar la distancia en los leds, activar el buzzer y enviar
+ * mensaje a modulo bluetooth.
+ * - Si distancia >= 5m enciente el led verde
+ * - Si 3m <= distancia < 5m enciende los leds verde y amarillo, activa el buzzer cada 1s y muestra
+ * el mesaje "Precaucion, vehiculo cerca"
+ * - Si distancia < 3m enciende los leds verde, amarillo y rojo, activa el buzzer cada 0.5s y muestra
+ * el mesaje "Peligro, vehiculo cerca"
  * @param[in] pvParameter void* que corresponde a los métodos de la tarea
  */
 static void NotificarTask(void *pvParameter){
@@ -125,19 +128,32 @@ static void NotificarTask(void *pvParameter){
     		LedOn(LED_2);
     		LedOn(LED_3);
 			GPIOOn(GPIO_23);
+			UartSendString(UART_CONNECTOR, "Peligro, vehiculo cerca");
     	}
 		if((distancia >= 300) && (distancia < 500)) 
 		{
     		LedOn(LED_1);
     		LedOn(LED_2);
 			GPIOOn(GPIO_23);
+			UartSendString(UART_CONNECTOR, "Precaucion, vehiculo cerca");
 			vTaskDelay(CONFIG_BUZZER_PERIOD / portTICK_PERIOD_MS);
     	}
     	if(distancia >= 500)
 		{
     		LedOn(LED_1);
     	}
+
+
     }
+}
+
+/**  @def void FuncUart(void* param)
+ * @brief Función invocada al recibir un dato por UART
+ */
+void FuncUart(void* param){
+	uint8_t dato;
+    UartReadByte(UART_PC, &dato);
+	UartSendByte(UART_PC, (char *) &dato);
 }
 
 /*==================[external functions definition]==========================*/
@@ -163,6 +179,14 @@ void app_main(void){
         .param_p = NULL
     };
     TimerInit(&timer_notificacion);
+
+	serial_config_t puertoSerie={			
+		.port =	UART_CONNECTOR,
+		.baud_rate = 115200,
+		.func_p = FuncUart,
+		.param_p = NULL
+	};
+	UartInit(&puertoSerie);
 
 	/*tasks*/
     xTaskCreate(&MedirTask, "Medir", 512, NULL, 5, &medir_task_handle);
