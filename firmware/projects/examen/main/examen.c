@@ -65,12 +65,10 @@
 /*==================[internal data definition]===============================*/
 
 /** @def sensorDis_task_handle
- *  @brief
  */
 TaskHandle_t sensorDis_task_handle = NULL;
 
 /** @def mostrar_task_handle
- * @brief
  */
 TaskHandle_t acelerometro_task_handle = NULL;
 
@@ -154,9 +152,9 @@ static void AcelerometroTask(void *pvParameter){
 		AnalogInputReadSingle(CH1, &valorCH3);
 		AnalogInputReadSingle(CH1, &valorCH2);
 
-		gravedad = ((valorCH1 + valorCH2 + valorCH3) - 1,65)/0.3;
+		gravedad = ((valorCH1 + valorCH2 + valorCH3) - 1.65)/0.3;
 
-		if((gravedad < -4) || (gravedad > 4))
+		if(gravedad > 4)
 		{
 			UartSendString(UART_CONNECTOR, "Caida detectada");
 		}
