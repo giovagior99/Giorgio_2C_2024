@@ -17,6 +17,9 @@
  * |      BUZZER 	| 	 GPIO_23	|
  * |      UART TX 	| 	 GPIO_18	|
  * |      UART RX 	| 	 GPIO_19	|
+ * |      ADC CH1	| 	 GPIO_1		|
+ * |      ADC CH2	| 	 GPIO_2		|
+ * |      ADC CH3	| 	 GPIO_3		|
  * | 	  GND	 	| 	  GND		|
  * |      +5V	 	| 	  +5V		|
  *
@@ -41,6 +44,7 @@
 #include "led.h"
 #include "timer_mcu.h"
 #include "uart_mcu.h"
+#include "analog_io_mcu.h"
 /*==================[macros and definitions]=================================*/
 
 /** @def CONFIG_SENSOR_DISTANCIA_PERIOD
@@ -49,9 +53,9 @@
 #define CONFIG_SENSOR_DISTANCIA_PERIOD 500000 //500 ms en microsegundos
 
 /** @def CONFIG_ACELEROMETRO_PERIOD
- * @brief Periodo de tiempo de refresco de notificacion en leds y buzzer (500 ms)
+ * @brief Periodo de tiempo de refresco de medición del Acelerometro (100 Hz)
  */
-#define CONFIG_ACELEROMETRO_PERIOD 500000 //500 ms en microsegundos
+#define CONFIG_ACELEROMETRO_PERIOD 10000 //100 Hz en microsegundos
 
 /** @def CONFIG_BUZZER_PERIOD
  * @brief Periodo de tiempo de delay para el buzzer
@@ -77,6 +81,9 @@ uint16_t distancia = 0;
 
 /*==================[internal functions declaration]=========================*/
 
+/**  @def void FuncTimerA(void* param)
+ * @brief Función invocada en la interrupción del timer A
+ */
 void FuncTimerA(void* param){
     vTaskNotifyGiveFromISR(sensorDis_task_handle, pdFALSE);
 }
@@ -130,18 +137,30 @@ static void SensorDisTask(void *pvParameter){
 }
 
 /** @def static void AcelerometroTask(void *pvParameter)
- * @brief Tarea encargada 
+ * @brief Tarea encargada de leer los canales del acelerometro, calcular el valor G y encviar el 
+ * mensaje "Caida detectada" si la |gravedad| > 4
  * @param[in] pvParameter void* que corresponde a los métodos de la tarea
  */
 static void AcelerometroTask(void *pvParameter){
-    while(true)
-	{	
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
+    uint16_t valorCH1 = 0;
+	uint16_t valorCH2 = 0;
+	uint16_t valorCH3 = 0;
+	uint16_t gravedad = 0;
 
-		
+	while(1){
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); /* La tarea espera en este punto hasta recibir una notificación */
 
+		AnalogInputReadSingle(CH1, &valorCH1);
+		AnalogInputReadSingle(CH1, &valorCH3);
+		AnalogInputReadSingle(CH1, &valorCH2);
 
-    }
+		gravedad = ((valorCH1 + valorCH2 + valorCH3) - 1,65)/0.3;
+
+		if((gravedad < -4) || (gravedad > 4))
+		{
+			UartSendString(UART_CONNECTOR, "Caida detectada");
+		}
+	}
 }
 
 /**  @def void FuncUart(void* param)
@@ -184,6 +203,33 @@ void app_main(void){
 		.param_p = NULL
 	};
 	UartInit(&puertoSerie);
+
+	analog_input_config_t analogConverter1={			
+		.input = CH1,			
+		.mode = ADC_SINGLE,			
+		.func_p = NULL,				
+		.param_p = NULL,		
+		.sample_frec = NULL		
+	};
+	AnalogInputInit(&analogConverter1);
+
+	analog_input_config_t analogConverter2={			
+		.input = CH2,			
+		.mode = ADC_SINGLE,			
+		.func_p = NULL,				
+		.param_p = NULL,		
+		.sample_frec = NULL		
+	};
+	AnalogInputInit(&analogConverter2);
+
+	analog_input_config_t analogConverter3={			
+		.input = CH3,			
+		.mode = ADC_SINGLE,			
+		.func_p = NULL,				
+		.param_p = NULL,		
+		.sample_frec = NULL		
+	};
+	AnalogInputInit(&analogConverter3);
 
 	/*tasks*/
     xTaskCreate(&SensorDisTask, "SensorDistancia", 512, NULL, 5, &sensorDis_task_handle);
