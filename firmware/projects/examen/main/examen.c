@@ -14,6 +14,7 @@
  * |      LED 1	 	| 	 GPIO_11	|
  * | 	  LED 2	 	| 	 GPIO_10	|
  * |      LED 3	 	| 	 GPIO_5		|
+ * |      BUZZER 	| 	 GPIO_23	|
  * | 	  GND	 	| 	  GND		|
  * |      +5V	 	| 	  +5V		|
  *
@@ -43,12 +44,17 @@
 /** @def CONFIG_MEDIR_PERIOD
  * @brief Periodo de tiempo de refresco de medición del HC-SR04 (500 ms)
  */
-#define CONFIG_MEDIR_PERIOD 500000 //en microsegundos
+#define CONFIG_MEDIR_PERIOD 500000 //500 ms en microsegundos
 
 /** @def CONFIG_NOTIFICAR_PERIOD
  * @brief Periodo de tiempo de refresco de notificacion en leds y buzzer (500 ms)
  */
-#define CONFIG_NOTIFICAR_PERIOD 500000 //en microsegundos
+#define CONFIG_NOTIFICAR_PERIOD 500000 //500 ms en microsegundos
+
+/** @def CONFIG_BUZZER_PERIOD
+ * @brief Periodo de tiempo de delay para el buzzer
+ */
+#define CONFIG_BUZZER_PERIOD 500 //500 ms
 
 /*==================[internal data definition]===============================*/
 
@@ -102,27 +108,34 @@ static void MedirTask(void *pvParameter){
  * Si distancia >= 5m enciente el led verde
  * Si 3m <= distancia < 5m enciende los leds verde y amarillo
  * Si distancia < 3m enciende los leds verde, amarillo y rojo
+ * Activa el buzzer si distancia < 5m, con una frecuancia de 1s si distancia < 5m y 0.5s
+ * si distancia < 3m
  * @param[in] pvParameter void* que corresponde a los métodos de la tarea
  */
 static void NotificarTask(void *pvParameter){
-    while(true){	
+    while(true)
+	{	
 		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
 
 		LedsOffAll();
+		GPIOOff(GPIO_23);
 
-    	if(distancia >= 500)
-		{
-    		LedOn(LED_1);
-    	}
-    	if((distancia >= 300) && (distancia < 500)) 
-		{
-    		LedOn(LED_1);
-    		LedOn(LED_2);
-    	}
-    	if(distancia < 300) {
+		if(distancia < 300) {
     		LedOn(LED_1);
     		LedOn(LED_2);
     		LedOn(LED_3);
+			GPIOOn(GPIO_23);
+    	}
+		if((distancia >= 300) && (distancia < 500)) 
+		{
+    		LedOn(LED_1);
+    		LedOn(LED_2);
+			GPIOOn(GPIO_23);
+			vTaskDelay(CONFIG_BUZZER_PERIOD / portTICK_PERIOD_MS);
+    	}
+    	if(distancia >= 500)
+		{
+    		LedOn(LED_1);
     	}
     }
 }
@@ -133,6 +146,7 @@ void app_main(void){
 	/* initializations */
 	HcSr04Init(GPIO_3, GPIO_2);
 	LedsInit();
+	GPIOInit(GPIO_23, GPIO_OUTPUT); //GPIO para el Buzzer
 
 	timer_config_t timer_medicion = {
         .timer = TIMER_A,
