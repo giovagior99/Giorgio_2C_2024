@@ -43,15 +43,15 @@
 #include "uart_mcu.h"
 /*==================[macros and definitions]=================================*/
 
-/** @def CONFIG_MEDIR_PERIOD
+/** @def CONFIG_SENSOR_DISTANCIA_PERIOD
  * @brief Periodo de tiempo de refresco de medición del HC-SR04 (500 ms)
  */
-#define CONFIG_MEDIR_PERIOD 500000 //500 ms en microsegundos
+#define CONFIG_SENSOR_DISTANCIA_PERIOD 500000 //500 ms en microsegundos
 
-/** @def CONFIG_NOTIFICAR_PERIOD
+/** @def CONFIG_ACELEROMETRO_PERIOD
  * @brief Periodo de tiempo de refresco de notificacion en leds y buzzer (500 ms)
  */
-#define CONFIG_NOTIFICAR_PERIOD 500000 //500 ms en microsegundos
+#define CONFIG_ACELEROMETRO_PERIOD 500000 //500 ms en microsegundos
 
 /** @def CONFIG_BUZZER_PERIOD
  * @brief Periodo de tiempo de delay para el buzzer
@@ -60,20 +60,15 @@
 
 /*==================[internal data definition]===============================*/
 
-/** @def medir_task_handle
+/** @def sensorDis_task_handle
  *  @brief
  */
-TaskHandle_t medir_task_handle = NULL;
+TaskHandle_t sensorDis_task_handle = NULL;
 
 /** @def mostrar_task_handle
  * @brief
  */
-TaskHandle_t notificar_task_handle = NULL;
-
-/** @def comunicar_task_handle
- * @brief
- */
-TaskHandle_t comunicar_task_handle = NULL;
+TaskHandle_t acelerometro_task_handle = NULL;
 
 /** @def distancia
  * @brief Distancia medida por el sensor HC-SR04
@@ -83,42 +78,31 @@ uint16_t distancia = 0;
 /*==================[internal functions declaration]=========================*/
 
 void FuncTimerA(void* param){
-    vTaskNotifyGiveFromISR(medir_task_handle, pdFALSE);
+    vTaskNotifyGiveFromISR(sensorDis_task_handle, pdFALSE);
 }
 
 /**  @def void FuncTimerB(void* param)
  * @brief Función invocada en la interrupción del timer B
  */
 void FuncTimerB(void* param){
-   vTaskNotifyGiveFromISR(notificar_task_handle, pdFALSE); 
+   vTaskNotifyGiveFromISR(acelerometro_task_handle, pdFALSE); 
 }
 
-/** @def static void MedirTask(void *pvParameter)
- * @brief Tarea encargada de medir la distancia cada cierto periodo de tiempo
- * @param[in] pvParameter void* que corresponde a los parametros de la tarea
- */
-static void MedirTask(void *pvParameter){
-    while(true)
-	{
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); /* La tarea espera en este punto hasta recibir una notificación */
-		distancia = HcSr04ReadDistanceInCentimeters();
-	}
-}
-
-/** @def static void NotificarTask(void *pvParameter)
- * @brief Tarea encargada de mostrar la distancia en los leds, activar el buzzer y enviar
- * mensaje a modulo bluetooth.
+/** @def static void SensorDisTask(void *pvParameter)
+ * @brief Tarea encargada de medir la distancia cada cierto periodo de tiempo, y de mostrar
+ * la distancia en los leds, activar el buzzer y enviar mensaje a modulo bluetooth.
  * - Si distancia >= 5m enciente el led verde
  * - Si 3m <= distancia < 5m enciende los leds verde y amarillo, activa el buzzer cada 1s y muestra
  * el mesaje "Precaucion, vehiculo cerca"
  * - Si distancia < 3m enciende los leds verde, amarillo y rojo, activa el buzzer cada 0.5s y muestra
  * el mesaje "Peligro, vehiculo cerca"
- * @param[in] pvParameter void* que corresponde a los métodos de la tarea
+ * @param[in] pvParameter void* que corresponde a los parametros de la tarea
  */
-static void NotificarTask(void *pvParameter){
+static void SensorDisTask(void *pvParameter){
     while(true)
-	{	
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
+	{
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); /* La tarea espera en este punto hasta recibir una notificación */
+		distancia = HcSr04ReadDistanceInCentimeters();
 
 		LedsOffAll();
 		GPIOOff(GPIO_23);
@@ -142,6 +126,19 @@ static void NotificarTask(void *pvParameter){
 		{
     		LedOn(LED_1);
     	}
+	}
+}
+
+/** @def static void AcelerometroTask(void *pvParameter)
+ * @brief Tarea encargada 
+ * @param[in] pvParameter void* que corresponde a los métodos de la tarea
+ */
+static void AcelerometroTask(void *pvParameter){
+    while(true)
+	{	
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
+
+		
 
 
     }
@@ -164,21 +161,21 @@ void app_main(void){
 	LedsInit();
 	GPIOInit(GPIO_23, GPIO_OUTPUT); //GPIO para el Buzzer
 
-	timer_config_t timer_medicion = {
+	timer_config_t timer_sensorDist= {
         .timer = TIMER_A,
-        .period = CONFIG_MEDIR_PERIOD,
+        .period = CONFIG_SENSOR_DISTANCIA_PERIOD,
         .func_p = FuncTimerA,
         .param_p = NULL
     };
-    TimerInit(&timer_medicion);
+    TimerInit(&timer_sensorDist);
 
-	timer_config_t timer_notificacion = {
+	timer_config_t timer_acelerometro = {
         .timer = TIMER_B,
-        .period = CONFIG_NOTIFICAR_PERIOD,
+        .period = CONFIG_ACELEROMETRO_PERIOD,
         .func_p = FuncTimerB,
         .param_p = NULL
     };
-    TimerInit(&timer_notificacion);
+    TimerInit(&timer_acelerometro);
 
 	serial_config_t puertoSerie={			
 		.port =	UART_CONNECTOR,
@@ -189,12 +186,12 @@ void app_main(void){
 	UartInit(&puertoSerie);
 
 	/*tasks*/
-    xTaskCreate(&MedirTask, "Medir", 512, NULL, 5, &medir_task_handle);
-	xTaskCreate(&NotificarTask, "Notificar", 512, NULL, 5, &notificar_task_handle);
+    xTaskCreate(&SensorDisTask, "SensorDistancia", 512, NULL, 5, &sensorDis_task_handle);
+	xTaskCreate(&AcelerometroTask, "Acelerometro", 512, NULL, 5, &acelerometro_task_handle);
 
 	/*timers start*/
-    TimerStart(timer_medicion.timer);
-    TimerStart(timer_notificacion.timer);
+    TimerStart(timer_sensorDist.timer);
+    TimerStart(timer_acelerometro.timer);
 
 }
 /*==================[end of file]============================================*/
