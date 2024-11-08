@@ -229,5 +229,6 @@ void app_main(void){
 
 	/*timers start*/
     TimerStart(timer_conversionAD.timer);
+	TimerStart(timer_conversionDA.timer);
 }
 /*==================[end of file]============================================*/
