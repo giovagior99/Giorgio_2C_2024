@@ -158,6 +158,13 @@ void FuncTimerA(void* param){
     vTaskNotifyGiveFromISR(convertirAD_task_handle, pdFALSE);
 }
 
+/** @def void FuncTimerB(void* param)
+ * @brief Función invocada en la interrupción del timer B
+ */
+void FuncTimerB(void* param){
+    vTaskNotifyGiveFromISR(convertirAD_task_handle, pdFALSE);
+}
+
 /**  @def void FuncUart(void* param)
  * @brief Función invocada al recibir un dato por UART
  */
