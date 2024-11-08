@@ -54,7 +54,7 @@
 /*==================[internal data definition]===============================*/
 
 /** @def frecuencia
- * @brief Frecuencia de muesteo en us
+ * @brief Frecuencia de muesteo en microsegundos
  */
 uint16_t frecuencia = 2000;
 
@@ -62,6 +62,11 @@ uint16_t frecuencia = 2000;
  *  @brief
  */
 TaskHandle_t convertirAD_task_handle = NULL;
+
+/** @def convertirDA_task_handle
+ *  @brief
+ */
+TaskHandle_t convertirDA_task_handle = NULL;
 
 /** @def ecg
  * @brief Buffer que almacena los datos del ecg
@@ -104,12 +109,11 @@ void DecreaseFrecuencySwitch(void *pvParameter){
 	frecuencia-=100;	
 }
 
-/** @def static void  ConvertirADTask(void *pvParameter)
- * @brief Tarea encargada de adquirir la entrada analogica cada cierto tiempo
+/** @def static void  ConvertirDATask(void *pvParameter)
+ * @brief Tarea encargada de mostrar los datos del ecg por salida digital
  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
  */
-static void ConvertirADTask(void *pvParameter){
-	uint16_t valor = 0;
+static void ConvertirDATask(void *pvParameter){
 	uint8_t contador = 0;
 	//char buffer[20];
 	while(1){
@@ -124,6 +128,18 @@ static void ConvertirADTask(void *pvParameter){
 			AnalogOutputWrite((uint8_t*) ecg[contador]);
 			contador++;
 		}
+	}
+}
+
+/** @def static void  ConvertirADTask(void *pvParameter)
+ * @brief Tarea encargada de adquirir la entrada analogica cada cierto tiempo
+ * @param[in] pvParameter void* que corresponde a los parametros de la tarea
+ */
+static void ConvertirADTask(void *pvParameter){
+	uint16_t valor = 0;
+	//char buffer[20];
+	while(1){
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); /* La tarea espera en este punto hasta recibir una notificación */
 
 		AnalogInputReadSingle(CH1, &valor);
 
@@ -184,7 +200,7 @@ void app_main(void){
         .func_p = FuncTimerB,
         .param_p = NULL
     };
-    TimerInit(&timer_conversionAD);
+    TimerInit(&timer_conversionDA);
 
 	serial_config_t puertoSerie={			
 		.port =	UART_PC,
@@ -209,6 +225,7 @@ void app_main(void){
 	SwitchActivInt(SWITCH_1, IncreaseFrecuencySwitch, NULL);
 	SwitchActivInt(SWITCH_2, DecreaseFrecuencySwitch, NULL);
     xTaskCreate(&ConvertirADTask, "ConvertirAD", 512, NULL, 5, &convertirAD_task_handle);
+	xTaskCreate(&ConvertirDATask, "ConvertirDA", 512, NULL, 5, &convertirDA_task_handle);
 
 	/*timers start*/
     TimerStart(timer_conversionAD.timer);

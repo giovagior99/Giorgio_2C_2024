@@ -41,6 +41,9 @@
         },
         {
             "path": "projects/examen"
+        },
+        {
+            "path": "projects/Proyecto_final/Ojeda_Giorgio_2C_2024/firmware/examples/Proyecto_Integrador"
         }
     ],
     "settings": {
@@ -97,7 +100,10 @@
             "mpu6050.h": "c",
             "i2c_mcu.h": "c",
             "stdio.h": "c",
-            "timers.h": "c"
+            "timers.h": "c",
+            "buzzer.h": "c",
+            "ble_mcu.h": "c",
+            "hx711.h": "c"
         },
     },
     "tasks": {
