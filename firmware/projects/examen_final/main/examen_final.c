@@ -13,6 +13,8 @@
  * | 	 TRIGGER 	| 	 GPIO_2		|
  * |      UART TX 	| 	 GPIO_18	|
  * |      UART RX 	| 	 GPIO_19	|
+ * |   VALVULA_AG 	| 	 GPIO_23	|
+ * |   VALVULA_AL  	| 	 GPIO_2		|
  * |      +5V	 	| 	  +5V		|
  * | 	  GND	 	| 	  GND		|
  *
@@ -39,6 +41,7 @@
 #include "timer_mcu.h"
 #include "uart_mcu.h"
 #include "analog_io_mcu.h"
+#include "gpio_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -119,10 +122,12 @@ void OnOffSwitch(void *pvParameter){
 }
 
 /** @def static void MedirLlenarTask(void *pvParameter)
- * @brief Tarea encargada de medir 
+ * @brief Tarea encargada de medir la altura del recipiente de agua y el peso recipiente de
+ * alimento
  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
  */
 static void MedirLlenarTask(void *pvParameter){
+	uint16_t valorCH1 = 0;
     while(true)
 	{
 		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); //La tarea espera en este punto hasta recibir una notificación
@@ -130,8 +135,31 @@ static void MedirLlenarTask(void *pvParameter){
 		if (tecON) //Si tecON == 1 se mide
 		{
 			
+			//Mediciones
+			distancia = HcSr04ReadDistanceInCentimeters();
+			AnalogInputReadSingle(CH1, &valorCH1);
+
+			//Calculo de mililitros de agua
+			mlagua= 3.14 * 10 * 10 *(30-distancia);
+
+			//Calculo de gramos de alimento
+			peso=;
+
+			//Accion valvula de agua
+			if(mlagua < 2500){ //Si hay menos de 2500 ml de agua se puede seguir llegando el recipiente de agua
+				if(mlagua < 500){ //Si hay menos de 500 ml de agua se abre la valvula de agua
+					GPIOOn(GPIO_23);
+				}	
+			}
+			else{
+				GPIOOff(GPIO_23);
+			}
+
+			//Accion valvula de alimento
+
+
+
 		}
-        
     }
 }
 
@@ -164,6 +192,8 @@ void app_main(void){
 	LedsInit();
 	SwitchesInit();
 	HcSr04Init(GPIO_3, GPIO_2); //Medidor de distancia por ultrasonido
+	GPIOInit(GPIO_23, GPIO_OUTPUT); //GPIO para la electrovalvula del agua
+	GPIOInit(GPIO_2, GPIO_OUTPUT); //GPIO para la electrovalvula del alimento
 
 	timer_config_t timer_medicion = { //Timer para medir los recipientes y rellenar
         .timer = TIMER_A,
@@ -197,8 +227,6 @@ void app_main(void){
 		.sample_frec = NULL		
 	};
 	AnalogInputInit(&analogConverter);
-
-	AnalogOutputInit();
 
 	/*tasks*/
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL); //Para prender y apagar el dispositivo
