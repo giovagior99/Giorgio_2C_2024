@@ -67,6 +67,21 @@ TaskHandle_t medirllenar_task_handle = NULL;
  */
 TaskHandle_t comunicar_task_handle = NULL;
 
+/** @def distancia
+ * @brief Distancia medida para calcular la cantidad de agua en el recipiente
+ */
+uint16_t distancia = 0;
+
+/** @def mlagua
+ * @brief Cantidad de agua en el recipiente en mililitros
+ */
+uint16_t mlagua = 0;
+
+/** @def peso
+ * @brief Peso de alimento medido en el recipiente
+ */
+uint16_t peso = 0;
+
 /*==================[internal functions declaration]=========================*/
 
 /** @def void FuncTimerA(void* param)
@@ -106,7 +121,7 @@ void OnOffSwitch(void *pvParameter){
 static void MedirLlenarTask(void *pvParameter){
     while(true)
 	{
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); //La tarea espera en este punto hasta recibir una notificación
 		
 		if (tecON) //Si tecON == 1 se mide
 		{
@@ -117,20 +132,24 @@ static void MedirLlenarTask(void *pvParameter){
 }
 
 /** @def static void ComunicarTask(void *pvParameter)
- * @brief Tarea encargada de 
+ * @brief Tarea encargada de comunicar por UART a la PC el estado de los recipientes, el peso
+ * de alimento y los mililitros de agua
  * @param[in] pvParameter void* que corresponde a los métodos de la tarea
  */
 static void ComunicarTask(void *pvParameter){
 	uint16_t dmostrar = 0;
     while(true)
 	{	
-		ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* La tarea espera en este punto hasta recibir una notificación */
+		ulTaskNotifyTake(pdTRUE, portMAX_DELAY); //La tarea espera en este punto hasta recibir una notificación
 		
-		if(tecON) //Si tecON == 1 se muestra la distancia
+		if(tecON) //Si tecON == 1 se comunica el estado de los recipientes
 		{
-
-		}
-			
+			UartSendString(UART_PC, "Agua: \r"); //Mando el string por UART
+			UartSendString(UART_PC, (char*)UartItoa(mlagua, 10)); //Mando el string por UART
+            UartSendString(UART_PC, " cm^3, Alimento: \r"); //Mando el string por UART
+			UartSendString(UART_PC, (char*)UartItoa(peso, 10)); //Mando el string por UART
+			UartSendString(UART_PC, " gr\r\n"); //Mando el string por UART
+		}		
     }
 }
 
