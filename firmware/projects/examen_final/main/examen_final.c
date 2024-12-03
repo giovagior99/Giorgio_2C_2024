@@ -34,6 +34,7 @@
 #include "switch.h"
 #include "hc_sr04.h"
 #include "timer_mcu.h"
+#include "uart_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -157,15 +158,22 @@ void app_main(void){
     };
     TimerInit(&timer_comunicacion);
 
+	serial_config_t puertoSerie={			
+		.port =	UART_PC,
+		.baud_rate = 9600,
+		.func_p = NULL,
+		.param_p = NULL
+	};
+	UartInit(&puertoSerie);
+
 	/*tasks*/
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL); //Para prender y apagar el dispositivo
-	xTaskCreate(&MedirLlenarTask, "MedirLlenar", 512, NULL, 5, &medirllenar_task_handle);
-	xTaskCreate(&ComunicarTask, "Comunicar", 512, NULL, 5, &comunicar_task_handle);
+	xTaskCreate(&MedirLlenarTask, "MedirLlenar", 512, NULL, 5, &medirllenar_task_handle); //Mide los recipientes y los llena segun el caso
+	xTaskCreate(&ComunicarTask, "Comunicar", 512, NULL, 5, &comunicar_task_handle); //Comunica el estado de los recipientes
 
 	/*timers start*/
     TimerStart(timer_medicion.timer);
     TimerStart(timer_comunicacion.timer);
-
 
 	LedsOffAll();
 
