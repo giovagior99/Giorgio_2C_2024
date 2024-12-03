@@ -72,15 +72,31 @@ void FuncTimerB(void* param){
 
 }
 
+/** @def void OnOffSwitch(void *pvParameter)
+ * @brief Funcion que cuando se presiona el Switch 1 cambia el estado de tecON para encender 
+ * o apagar el dispositivo
+ * @param [in] NULL
+*/
+void OnOffSwitch(void *pvParameter){
+	tecON = !tecON;
+
+	if(tecON){
+		LedOn(LED_1);
+	}
+	else{
+		LedsOffAll();
+	}
+}
+
 /*==================[external functions definition]==========================*/
 void app_main(void){
 	
 	/*Inicializations*/
 	LedsInit();
 	SwitchesInit();
-	HcSr04Init(GPIO_3, GPIO_2);
+	HcSr04Init(GPIO_3, GPIO_2); //Medidor de distancia por ultrasonido
 
-	timer_config_t timer_medicion = {
+	timer_config_t timer_medicion = { //Timer para medir los recipientes y rellenar
         .timer = TIMER_A,
         .period = CONFIG_MEASURE_PERIOD,
         .func_p = FuncTimerA,
@@ -88,13 +104,17 @@ void app_main(void){
     };
     TimerInit(&timer_medicion);
 
-	timer_config_t timer_comunicacion = {
+	timer_config_t timer_comunicacion = { //Timer para comunicar la altura y gramos en los recipientes
         .timer = TIMER_B,
         .period = CONFIG_COMUNICATION_PERIOD,
         .func_p = FuncTimerB,
         .param_p = NULL
     };
     TimerInit(&timer_comunicacion);
+
+	/*tasks*/
+	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL); //Para prender y apagar el dispositivo
+
 
 	LedsOffAll();
 
