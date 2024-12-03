@@ -8,8 +8,11 @@
  *
  * |    Peripheral  |   ESP32   	|
  * |:--------------:|:--------------|
+ * |      LED 1	 	| 	 GPIO_11	|
  * | 	  ECHO	 	| 	 GPIO_3		|
  * | 	 TRIGGER 	| 	 GPIO_2		|
+ * |      UART TX 	| 	 GPIO_18	|
+ * |      UART RX 	| 	 GPIO_19	|
  * |      +5V	 	| 	  +5V		|
  * | 	  GND	 	| 	  GND		|
  *
@@ -35,6 +38,7 @@
 #include "hc_sr04.h"
 #include "timer_mcu.h"
 #include "uart_mcu.h"
+#include "analog_io_mcu.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -184,6 +188,17 @@ void app_main(void){
 		.param_p = NULL
 	};
 	UartInit(&puertoSerie);
+
+	analog_input_config_t analogConverter={			
+		.input = CH1,			
+		.mode = ADC_SINGLE,			
+		.func_p = NULL,				
+		.param_p = NULL,		
+		.sample_frec = NULL		
+	};
+	AnalogInputInit(&analogConverter);
+
+	AnalogOutputInit();
 
 	/*tasks*/
 	SwitchActivInt(SWITCH_1, OnOffSwitch, NULL); //Para prender y apagar el dispositivo
