@@ -11,13 +11,13 @@
  * |     LED 1	 	| 	 GPIO_11	|
  * | 	 ECHO	 	| 	 GPIO_3		|
  * | 	TRIGGER 	| 	 GPIO_2		|
+ * |   VALVULA_AGU 	| 	 GPIO_23	|
+ * |    ADC CH1		| 	 GPIO_1		|
+ * |   VALVULA_ALI 	| 	 GPIO_2		|
  * |    UART TX 	| 	 GPIO_16	|
  * |    UART RX 	| 	 GPIO_17	|
- * |   VALVULA_AGU 	| 	 GPIO_23	|
- * |   VALVULA_ALI 	| 	 GPIO_2		|
  * |      +5V	 	| 	  +5V		|
  * | 	  GND	 	| 	  GND		|
- *
  *
  * @section changelog Changelog
  *
@@ -136,8 +136,8 @@ static void MedirLlenarTask(void *pvParameter){
 		if (tecON) //Si tecON == 1 se mide
 		{
 			//Mediciones
-			distancia = HcSr04ReadDistanceInCentimeters();
-			AnalogInputReadSingle(CH1, &valorCH1); //Leo milivolts
+			distancia = HcSr04ReadDistanceInCentimeters(); // Mido la distancia a la superficie del agua
+			AnalogInputReadSingle(CH1, &valorCH1); //Leo milivolts correspondientes al peso del alimento
 
 			//Calculo de mililitros de agua
 			mlagua= 3.14 * 10 * 10 *(30-distancia);
