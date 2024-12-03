@@ -8,13 +8,13 @@
  *
  * |    Peripheral  |   ESP32   	|
  * |:--------------:|:--------------|
- * |      LED 1	 	| 	 GPIO_11	|
- * | 	  ECHO	 	| 	 GPIO_3		|
- * | 	 TRIGGER 	| 	 GPIO_2		|
- * |      UART TX 	| 	 GPIO_18	|
- * |      UART RX 	| 	 GPIO_19	|
- * |   VALVULA_AG 	| 	 GPIO_23	|
- * |   VALVULA_AL  	| 	 GPIO_2		|
+ * |     LED 1	 	| 	 GPIO_11	|
+ * | 	 ECHO	 	| 	 GPIO_3		|
+ * | 	TRIGGER 	| 	 GPIO_2		|
+ * |    UART TX 	| 	 GPIO_16	|
+ * |    UART RX 	| 	 GPIO_17	|
+ * |   VALVULA_AGU 	| 	 GPIO_23	|
+ * |   VALVULA_ALI 	| 	 GPIO_2		|
  * |      +5V	 	| 	  +5V		|
  * | 	  GND	 	| 	  GND		|
  *
@@ -52,7 +52,7 @@
 #define CONFIG_MEASURE_PERIOD 500000 //en microsegundos
 
 /** @def CONFIG_SHOW_PERIOD
- * @brief Periodo de tiempo para comunicar la altura de agua en el recipiente y gramos
+ * @brief Periodo de tiempo para comunicar militros de agua en el recipiente y gramos
  * de alimento
  */
 #define CONFIG_COMUNICATION_PERIOD 500000 //en microsegundos
@@ -64,7 +64,7 @@
  */
 bool tecON = 0; //Por defecto esta apagado
 
-/** @def medir_task_handle
+/** @def medirllenar_task_handle
  *  @brief -
  */
 TaskHandle_t medirllenar_task_handle = NULL;
@@ -123,7 +123,8 @@ void OnOffSwitch(void *pvParameter){
 
 /** @def static void MedirLlenarTask(void *pvParameter)
  * @brief Tarea encargada de medir la altura del recipiente de agua y el peso recipiente de
- * alimento
+ * alimento, y en vase a eso calcular los mililitros de agua y gramos de alimento y accionar las
+ * valvulas si es necesario
  * @param[in] pvParameter void* que corresponde a los parametros de la tarea
  */
 static void MedirLlenarTask(void *pvParameter){
@@ -134,7 +135,6 @@ static void MedirLlenarTask(void *pvParameter){
 		
 		if (tecON) //Si tecON == 1 se mide
 		{
-			
 			//Mediciones
 			distancia = HcSr04ReadDistanceInCentimeters();
 			AnalogInputReadSingle(CH1, &valorCH1); //Leo milivolts
@@ -143,7 +143,7 @@ static void MedirLlenarTask(void *pvParameter){
 			mlagua= 3.14 * 10 * 10 *(30-distancia);
 
 			//Calculo de gramos de alimento
-			peso=valorCH1/3.3;
+			peso=valorCH1/3.3; //Vin [mV] = 3.3 * peso [g] => peso [g] = Vin [mV] / 3.3
 
 			//Accion valvula de agua
 			if(mlagua < 2500){ //Si hay menos de 2500 ml de agua se puede seguir llenando el recipiente de agua
@@ -208,7 +208,7 @@ void app_main(void){
     };
     TimerInit(&timer_medicion);
 
-	timer_config_t timer_comunicacion = { //Timer para comunicar la altura y gramos en los recipientes
+	timer_config_t timer_comunicacion = { //Timer para comunicar mililitros de agua y gramos de alimento
         .timer = TIMER_B,
         .period = CONFIG_COMUNICATION_PERIOD,
         .func_p = FuncTimerB,
@@ -216,7 +216,7 @@ void app_main(void){
     };
     TimerInit(&timer_comunicacion);
 
-	serial_config_t puertoSerie={			
+	serial_config_t puertoSerie={ //Puerto serie para comunicarse con la PC por UART
 		.port =	UART_PC,
 		.baud_rate = 9600,
 		.func_p = NULL,
@@ -224,7 +224,7 @@ void app_main(void){
 	};
 	UartInit(&puertoSerie);
 
-	analog_input_config_t analogConverter={			
+	analog_input_config_t analogConverter={ //ADC para medir el peso del alimento
 		.input = CH1,			
 		.mode = ADC_SINGLE,			
 		.func_p = NULL,				
