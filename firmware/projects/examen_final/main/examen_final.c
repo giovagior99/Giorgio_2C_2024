@@ -137,16 +137,16 @@ static void MedirLlenarTask(void *pvParameter){
 			
 			//Mediciones
 			distancia = HcSr04ReadDistanceInCentimeters();
-			AnalogInputReadSingle(CH1, &valorCH1);
+			AnalogInputReadSingle(CH1, &valorCH1); //Leo milivolts
 
 			//Calculo de mililitros de agua
 			mlagua= 3.14 * 10 * 10 *(30-distancia);
 
 			//Calculo de gramos de alimento
-			peso=;
+			peso=valorCH1/3.3;
 
 			//Accion valvula de agua
-			if(mlagua < 2500){ //Si hay menos de 2500 ml de agua se puede seguir llegando el recipiente de agua
+			if(mlagua < 2500){ //Si hay menos de 2500 ml de agua se puede seguir llenando el recipiente de agua
 				if(mlagua < 500){ //Si hay menos de 500 ml de agua se abre la valvula de agua
 					GPIOOn(GPIO_23);
 				}	
@@ -156,9 +156,14 @@ static void MedirLlenarTask(void *pvParameter){
 			}
 
 			//Accion valvula de alimento
-
-
-
+			if(peso < 500){ //Si hay menos de 500 gramos de alimento se puede seguir llenando el recipiente de alimento
+				if(peso < 50){ //Si hay menos de 100 gramos de alimento se abre la valvula de alimento	
+					GPIOOn(GPIO_2);
+				}
+			}
+			else{
+				GPIOOff(GPIO_2);
+			}
 		}
     }
 }
